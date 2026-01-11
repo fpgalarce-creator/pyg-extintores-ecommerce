@@ -92,82 +92,101 @@ const Home = () => {
               <div className="absolute -left-4 top-8 h-32 w-32 rounded-full bg-ember/30 blur-3xl" />
               <div className="absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-blaze/30 blur-3xl" />
               <div className="relative rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 via-white/10 to-white/5 p-8 shadow-glow">
-                <div className="rounded-3xl border border-white/0 bg-white/0 p-6">
-                  <h2 className="text-2xl font-semibold text-white">Solicita tu cotización</h2>
-                  <p className="mt-2 text-sm text-white/70">
-                    Completa el formulario y un asesor te contactará.
-                  </p>
-                  <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
-                    <div className="grid gap-4 md:grid-cols-2">
+                <h2 className="text-2xl font-semibold text-white">Solicita tu cotización</h2>
+                <p className="mt-2 text-sm text-white/70">
+                  Completa el formulario y un asesor te contactará.
+                </p>
+                <form className="mt-6 grid gap-5" onSubmit={handleSubmit}>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                      <span>NOMBRE COMPLETO</span>
                       <input
                         type="text"
                         name="name"
-                        placeholder="Nombre completo"
+                        placeholder="Ingresa tu nombre"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
+                    </label>
+                    <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                      <span>CORREO ELECTRÓNICO</span>
                       <input
                         type="email"
                         name="email"
-                        placeholder="Correo"
+                        placeholder="correo@empresa.cl"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
+                    </label>
+                    <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                      <span>TELÉFONO / WHATSAPP</span>
                       <input
                         type="tel"
                         name="phone"
-                        placeholder="Teléfono"
+                        placeholder="+56 9 0000 0000"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
+                    </label>
+                    <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                      <span>TIPO DE SOLICITUD</span>
                       <select
                         name="requestType"
                         value={formData.requestType}
                         onChange={handleChange}
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-ember/60 focus:outline-none"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white focus:border-ember/60 focus:outline-none"
                       >
                         <option value="" className="text-slate-900">
-                          Tipo de solicitud
+                          Selecciona una opción
                         </option>
-                        <option value="venta" className="text-slate-900">
+                        <option value="compra" className="text-slate-900">
                           Compra de extintores
                         </option>
-                        <option value="mantencion" className="text-slate-900">
-                          Mantención y recarga
+                        <option value="recarga" className="text-slate-900">
+                          Recarga / mantención
                         </option>
                         <option value="inspeccion" className="text-slate-900">
-                          Inspección técnica
+                          Inspección o certificación
+                        </option>
+                        <option value="senaletica" className="text-slate-900">
+                          Señalética y accesorios
+                        </option>
+                        <option value="otro" className="text-slate-900">
+                          Otro
                         </option>
                       </select>
-                    </div>
+                    </label>
+                  </div>
+                  <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                    <span>MENSAJE</span>
                     <textarea
                       name="message"
-                      rows={4}
-                      placeholder="Mensaje"
+                      rows={5}
+                      placeholder="Cuéntanos tu necesidad y cantidad aproximada."
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none md:col-span-2"
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                     />
-                    {formError && <p className="text-sm text-ember">{formError}</p>}
-                    {formSuccess && (
-                      <p className="text-sm text-emerald-300">
-                        ¡Gracias! Recibimos tu solicitud y te contactaremos pronto.
-                      </p>
-                    )}
-                    <button
-                      type="submit"
-                      className="mt-2 w-full rounded-full bg-ember px-5 py-3 text-sm font-semibold text-white transition hover:bg-blaze"
-                    >
-                      Enviar solicitud
-                    </button>
-                    <p className="text-xs text-white/60">
-                      Respondemos en horario laboral y confirmamos en menos de 24 horas.
+                  </label>
+                  {formError && <p className="text-sm text-ember">{formError}</p>}
+                  {formSuccess && (
+                    <p className="text-sm text-emerald-300">
+                      ¡Gracias! Recibimos tu solicitud y te contactaremos pronto.
                     </p>
-                  </form>
-                </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="mt-1 w-full rounded-full bg-ember px-5 py-3 text-sm font-semibold text-white transition hover:bg-blaze"
+                  >
+                    Enviar solicitud
+                  </button>
+                  <p className="text-left text-xs text-white/60">
+                    Respondemos en horario laboral y confirmamos en menos de 24 horas.
+                  </p>
+                </form>
               </div>
             </div>
           </div>
