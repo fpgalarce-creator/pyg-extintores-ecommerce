@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Flame, ShieldCheck, Truck, BadgeCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Container from '../components/Container'
@@ -20,6 +21,36 @@ const benefits = [
 ]
 
 const Home = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    requestType: '',
+    message: '',
+  })
+  const [formError, setFormError] = useState('')
+  const [formSuccess, setFormSuccess] = useState(false)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = event.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const isValid = Object.values(formData).every((value) => value.trim().length > 0)
+
+    if (!isValid) {
+      setFormError('Completa todos los campos para enviar tu solicitud.')
+      setFormSuccess(false)
+      return
+    }
+
+    setFormError('')
+    setFormSuccess(true)
+    setFormData({ name: '', email: '', phone: '', requestType: '', message: '' })
+  }
+
   return (
     <div className="space-y-20 pb-20">
       <section className="relative overflow-hidden">
@@ -48,33 +79,94 @@ const Home = () => {
                   Cotizar por WhatsApp
                 </a>
               </div>
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {['Despacho express', 'Factura electrónica', 'Garantía 12 meses'].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70"
-                  >
-                    {item}
-                  </div>
-                ))}
+              <div className="mt-10 flex flex-wrap gap-3">
+                <span className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/70">
+                  +10 años de experiencia
+                </span>
+                <span className="rounded-2xl border border-[#C9A24D]/40 bg-[#C9A24D]/10 px-4 py-2 text-sm text-[#C9A24D]">
+                  Ganadores Impulso Chileno 2024
+                </span>
               </div>
             </div>
             <div className="relative">
               <div className="absolute -left-4 top-8 h-32 w-32 rounded-full bg-ember/30 blur-3xl" />
               <div className="absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-blaze/30 blur-3xl" />
               <div className="relative rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 via-white/10 to-white/5 p-8 shadow-glow">
-                <div className="flex h-64 items-center justify-center rounded-3xl bg-gradient-to-br from-ember/30 via-white/5 to-blaze/30 text-2xl font-semibold text-white/80">
-                  Imagen
-                </div>
-                <div className="mt-6 grid gap-3 text-sm text-white/70">
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <span>Kit industrial</span>
-                    <span className="text-white">CLP 189.990</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <span>Servicios</span>
-                    <span className="text-white">Inspección anual</span>
-                  </div>
+                <div className="rounded-3xl border border-white/0 bg-white/0 p-6">
+                  <h2 className="text-2xl font-semibold text-white">Solicita tu cotización</h2>
+                  <p className="mt-2 text-sm text-white/70">
+                    Completa el formulario y un asesor te contactará.
+                  </p>
+                  <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Nombre completo"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Correo"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                      />
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Teléfono"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
+                      />
+                      <select
+                        name="requestType"
+                        value={formData.requestType}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-ember/60 focus:outline-none"
+                      >
+                        <option value="" className="text-slate-900">
+                          Tipo de solicitud
+                        </option>
+                        <option value="venta" className="text-slate-900">
+                          Compra de extintores
+                        </option>
+                        <option value="mantencion" className="text-slate-900">
+                          Mantención y recarga
+                        </option>
+                        <option value="inspeccion" className="text-slate-900">
+                          Inspección técnica
+                        </option>
+                      </select>
+                    </div>
+                    <textarea
+                      name="message"
+                      rows={4}
+                      placeholder="Mensaje"
+                      value={formData.message}
+                      onChange={handleChange}
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none md:col-span-2"
+                    />
+                    {formError && <p className="text-sm text-ember">{formError}</p>}
+                    {formSuccess && (
+                      <p className="text-sm text-emerald-300">
+                        ¡Gracias! Recibimos tu solicitud y te contactaremos pronto.
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      className="mt-2 w-full rounded-full bg-ember px-5 py-3 text-sm font-semibold text-white transition hover:bg-blaze"
+                    >
+                      Enviar solicitud
+                    </button>
+                    <p className="text-xs text-white/60">
+                      Respondemos en horario laboral y confirmamos en menos de 24 horas.
+                    </p>
+                  </form>
                 </div>
               </div>
             </div>
