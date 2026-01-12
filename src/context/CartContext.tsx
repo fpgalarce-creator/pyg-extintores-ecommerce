@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
-import { Product } from '../data/products'
+import { Product } from '../lib/productsStore'
 
 export interface CartItem {
   product: Product
@@ -9,8 +9,8 @@ export interface CartItem {
 interface CartContextValue {
   items: CartItem[]
   addItem: (product: Product) => void
-  removeItem: (productId: number) => void
-  updateQuantity: (productId: number, quantity: number) => void
+  removeItem: (productId: string) => void
+  updateQuantity: (productId: string, quantity: number) => void
   clear: () => void
   total: number
   count: number
@@ -52,11 +52,11 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     })
   }
 
-  const removeItem = (productId: number) => {
+  const removeItem = (productId: string) => {
     setItems((prev) => prev.filter((item) => item.product.id !== productId))
   }
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
     setItems((prev) =>
       prev
         .map((item) =>

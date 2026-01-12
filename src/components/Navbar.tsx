@@ -108,9 +108,9 @@ const Navbar = () => {
   }, [])
 
   const navLinkClass = (isActive: boolean) =>
-    `group relative inline-flex items-center gap-1 rounded-full border border-transparent px-4 py-2 text-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:border-ember/40 hover:bg-ember/10 hover:text-white ${
+    `group relative inline-flex items-center gap-1 px-3 py-2 text-sm transition duration-200 ${
       isActive ? 'text-white' : 'text-white/70'
-    } after:absolute after:bottom-1 after:left-3 after:right-3 after:h-px after:origin-left after:scale-x-0 after:bg-ember/70 after:transition-transform after:duration-200 hover:after:scale-x-100`
+    } hover:rounded-md hover:bg-white/5 hover:text-white hover:underline hover:decoration-ember/90 hover:underline-offset-4`
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-coal/80 backdrop-blur">
@@ -125,19 +125,21 @@ const Navbar = () => {
               <NavLink to="/" className={({ isActive }) => navLinkClass(isActive)}>
                 Inicio
               </NavLink>
-              <div className="relative" ref={productsRef}>
+              <div
+                className="relative"
+                ref={productsRef}
+                onMouseEnter={openProducts}
+                onMouseLeave={scheduleCloseProducts}
+              >
                 <NavLink
                   to="/productos"
-                  onMouseEnter={openProducts}
-                  onMouseLeave={scheduleCloseProducts}
+                  onClick={openProducts}
                   className={({ isActive }) => navLinkClass(isActive)}
                 >
                   Productos
                   <ChevronDown className="h-3.5 w-3.5 text-white/50 transition group-hover:text-white/80" />
                 </NavLink>
                 <div
-                  onMouseEnter={openProducts}
-                  onMouseLeave={scheduleCloseProducts}
                   className={`absolute left-0 top-full mt-3 w-64 rounded-2xl border border-white/10 bg-coal/90 p-3 shadow-xl backdrop-blur transition duration-200 ${
                     isProductsOpen
                       ? 'pointer-events-auto translate-y-0 opacity-100'
@@ -198,20 +200,21 @@ const Navbar = () => {
             </Link>
             <div className="relative hidden lg:flex">
               {session ? (
-                <div className="relative" ref={accountRef}>
+                <div
+                  className="relative"
+                  ref={accountRef}
+                  onMouseEnter={openAccount}
+                  onMouseLeave={scheduleCloseAccount}
+                >
                   <button
                     type="button"
                     onClick={() => setIsAccountOpen((prev) => !prev)}
-                    onMouseEnter={openAccount}
-                    onMouseLeave={scheduleCloseAccount}
                     className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
                   >
                     Mi cuenta
                     <ChevronDown className="h-4 w-4 text-white/60" />
                   </button>
                   <div
-                    onMouseEnter={openAccount}
-                    onMouseLeave={scheduleCloseAccount}
                     className={`absolute right-0 mt-3 w-48 rounded-2xl border border-white/10 bg-coal/90 p-2 text-sm shadow-xl backdrop-blur transition duration-200 ${
                       isAccountOpen
                         ? 'pointer-events-auto translate-y-0 opacity-100'

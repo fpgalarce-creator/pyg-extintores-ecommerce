@@ -9,9 +9,9 @@ import Checkout from './pages/Checkout'
 import Placeholder from './pages/Placeholder'
 import Login from './pages/Login'
 import Admin from './pages/Admin'
-import Maintenance from './pages/Maintenance'
 import ProductsExtintores from './pages/ProductsExtintores'
 import ProductsAccesorios from './pages/ProductsAccesorios'
+import ProductsMantencionExtintores from './pages/ProductsMantencionExtintores'
 import { getAuthSession, isAdminSession } from './utils/auth'
 
 const RequireAdmin = ({ children }: { children: JSX.Element }) => {
@@ -31,7 +31,10 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/productos" element={<Products />} />
           <Route path="/productos/extintores" element={<ProductsExtintores />} />
-          <Route path="/productos/mantencion-extintores" element={<Maintenance />} />
+          <Route
+            path="/productos/mantencion-extintores"
+            element={<ProductsMantencionExtintores />}
+          />
           <Route path="/productos/accesorios" element={<ProductsAccesorios />} />
           <Route path="/productos/:slug" element={<ProductDetail />} />
           <Route path="/login" element={<Login />} />

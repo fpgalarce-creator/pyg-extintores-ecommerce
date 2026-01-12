@@ -1,33 +1,33 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Container from '../components/Container'
 import ProductCard from '../components/ProductCard'
-import { products } from '../data/products'
+import ProductCategoryTabs from '../components/ProductCategoryTabs'
+import { getProducts, PRODUCTS_EVENT, STORAGE_KEY, Product } from '../lib/productsStore'
 
 const filters = ['ABC', 'CO2', '1kg', '2kg', '4kg', '6kg', 'Accesorios', 'Señalética']
-const categoryTabs = ['Todos', 'Extintores', 'Mantención de Extintores', 'Accesorios']
-
-const getProductCategory = (productName: string, productSlug: string, capacity: string) => {
-  const descriptor = `${productName} ${productSlug} ${capacity}`.toLowerCase()
-  if (descriptor.includes('mantencion') || descriptor.includes('mantención') || descriptor.includes('recarga')) {
-    return 'Mantención de Extintores'
-  }
-  if (descriptor.includes('accesorio') || descriptor.includes('señalética') || descriptor.includes('senal')) {
-    return 'Accesorios'
-  }
-  return 'Extintores'
-}
 
 const Products = () => {
-  const [activeCategory, setActiveCategory] = useState('Todos')
-  const filteredProducts = useMemo(() => {
-    if (activeCategory === 'Todos') {
-      return products
+  const [products, setProducts] = useState<Product[]>(() => getProducts())
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY) {
+        setProducts(getProducts())
+      }
     }
-    return products.filter((product) => {
-      const category = getProductCategory(product.name, product.slug, product.capacity)
-      return category === activeCategory
-    })
-  }, [activeCategory])
+
+    const handleProductsChange = () => {
+      setProducts(getProducts())
+    }
+
+    window.addEventListener('storage', handleStorage)
+    window.addEventListener(PRODUCTS_EVENT, handleProductsChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorage)
+      window.removeEventListener(PRODUCTS_EVENT, handleProductsChange)
+    }
+  }, [])
 
   return (
     <Container>
@@ -40,24 +40,8 @@ const Products = () => {
           </p>
         </header>
 
-        <section className="flex flex-wrap items-center gap-3">
-          {categoryTabs.map((category) => {
-            const isActive = category === activeCategory
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={`rounded-full border px-5 py-2 text-sm font-semibold transition ${
-                  isActive
-                    ? 'border-ember/60 bg-ember/15 text-white shadow-[0_0_12px_rgba(255,107,53,0.3)]'
-                    : 'border-white/10 bg-white/5 text-white/70 hover:border-ember/30 hover:bg-ember/10 hover:text-white'
-                }`}
-              >
-                {category}
-              </button>
-            )
-          })}
+        <section>
+          <ProductCategoryTabs />
         </section>
 
         <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
@@ -96,7 +80,7 @@ const Products = () => {
         </section>
 
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </section>
