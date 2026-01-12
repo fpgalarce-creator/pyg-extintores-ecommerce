@@ -22,7 +22,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       <div className="mt-6 h-36 overflow-hidden rounded-2xl bg-gradient-to-br from-ember/40 via-white/5 to-blaze/30">
         {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full rounded-2xl object-cover object-center"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-sm font-semibold text-white/70">
             {product.type} · {product.capacity}
