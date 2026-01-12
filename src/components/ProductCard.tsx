@@ -20,8 +20,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <Badge>Certificado</Badge>
         <span className="text-xs text-white/50">Stock {product.stock}</span>
       </div>
-      <div className="mt-6 flex h-36 items-center justify-center rounded-2xl bg-gradient-to-br from-ember/40 via-white/5 to-blaze/30 text-sm font-semibold text-white/70">
-        {product.type} · {product.capacity}
+      <div className="mt-6 h-36 overflow-hidden rounded-2xl bg-gradient-to-br from-ember/40 via-white/5 to-blaze/30">
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm font-semibold text-white/70">
+            {product.type} · {product.capacity}
+          </div>
+        )}
       </div>
       <div className="mt-5 flex-1">
         <Link to={`/productos/${product.slug}`} className="text-lg font-semibold text-white">

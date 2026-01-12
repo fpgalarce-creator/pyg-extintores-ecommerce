@@ -12,6 +12,7 @@ export interface Product {
   capacity: string
   shortDesc: string
   stock: number
+  imageUrl?: string
   specs: ProductSpec[]
 }
 
