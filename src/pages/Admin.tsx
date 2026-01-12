@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Container from '../components/Container'
 import Button from '../components/Button'
 import { products as catalogProducts } from '../data/products'
@@ -7,6 +7,10 @@ const STORAGE_KEY = 'pyg_admin_products'
 
 const categories = ['Extintores', 'Mantención de Extintores', 'Accesorios']
 
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string | undefined
+const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string | undefined
+const isCloudinaryConfigured = Boolean(cloudName && uploadPreset)
+
 type AdminProduct = {
   id: string
   name: string
@@ -14,6 +18,7 @@ type AdminProduct = {
   price: number
   description: string
   stock?: number
+  imageUrl?: string
 }
 
 const mapDefaultProducts = (): AdminProduct[] =>
@@ -24,6 +29,7 @@ const mapDefaultProducts = (): AdminProduct[] =>
     price: product.price,
     description: product.shortDesc,
     stock: product.stock,
+    imageUrl: product.imageUrl,
   }))
 
 const loadProducts = (): AdminProduct[] => {
@@ -55,6 +61,31 @@ const persistProducts = (items: AdminProduct[]) => {
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value)
 
+const uploadToCloudinary = async (file: File): Promise<string> => {
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Faltan las variables de Cloudinary en el entorno.')
+  }
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('upload_preset', uploadPreset)
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error('No se pudo subir la imagen.')
+  }
+
+  const data = (await response.json()) as { secure_url?: string }
+  if (!data.secure_url) {
+    throw new Error('No se recibió la URL de la imagen.')
+  }
+
+  return data.secure_url
+}
+
 const Admin = () => {
   const [items, setItems] = useState<AdminProduct[]>(() => loadProducts())
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -64,13 +95,33 @@ const Admin = () => {
     price: '',
     description: '',
     stock: '',
+    imageUrl: '',
   })
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle')
+  const [uploadMessage, setUploadMessage] = useState('')
 
   const isEditing = Boolean(editingId)
   const sortedItems = useMemo(
     () => items.slice().sort((a, b) => a.name.localeCompare(b.name)),
     [items],
   )
+
+  const uploadMessageClass =
+    uploadStatus === 'error'
+      ? 'text-red-200/80'
+      : uploadStatus === 'success'
+        ? 'text-emerald-200/80'
+        : 'text-white/60'
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
+  }, [previewUrl])
 
   const resetForm = () => {
     setFormState({
@@ -79,12 +130,54 @@ const Admin = () => {
       price: '',
       description: '',
       stock: '',
+      imageUrl: '',
     })
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    setUploadStatus('idle')
+    setUploadMessage('')
     setEditingId(null)
   }
 
   const updateField = (field: keyof typeof formState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null
+    setSelectedFile(file)
+    setUploadStatus('idle')
+    setUploadMessage('')
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file))
+    } else {
+      setPreviewUrl(null)
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setUploadStatus('error')
+      setUploadMessage('Selecciona una imagen antes de subirla.')
+      return
+    }
+    if (!isCloudinaryConfigured) {
+      setUploadStatus('error')
+      setUploadMessage('Faltan variables de entorno de Cloudinary.')
+      return
+    }
+    setUploadStatus('uploading')
+    setUploadMessage('Subiendo imagen...')
+    try {
+      const secureUrl = await uploadToCloudinary(selectedFile)
+      setFormState((prev) => ({ ...prev, imageUrl: secureUrl }))
+      setUploadStatus('success')
+      setUploadMessage('Imagen subida con éxito.')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error al subir la imagen.'
+      setUploadStatus('error')
+      setUploadMessage(message)
+    }
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -95,6 +188,7 @@ const Admin = () => {
     }
 
     const stockValue = formState.stock ? Number(formState.stock) : undefined
+    const imageUrlValue = formState.imageUrl.trim()
     const nextItem: AdminProduct = {
       id: editingId ?? `custom-${Date.now()}`,
       name: formState.name,
@@ -102,6 +196,7 @@ const Admin = () => {
       price: priceValue,
       description: formState.description,
       stock: Number.isNaN(stockValue) ? undefined : stockValue,
+      imageUrl: imageUrlValue ? imageUrlValue : undefined,
     }
 
     const nextItems = editingId
@@ -121,7 +216,12 @@ const Admin = () => {
       price: String(item.price),
       description: item.description,
       stock: item.stock ? String(item.stock) : '',
+      imageUrl: item.imageUrl ?? '',
     })
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    setUploadStatus('idle')
+    setUploadMessage('')
   }
 
   const handleDelete = (id: string) => {
@@ -208,6 +308,57 @@ const Admin = () => {
                 placeholder="Descripción breve del producto..."
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-white/70" htmlFor="product-image">
+                Imagen del producto
+              </label>
+              <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <input
+                  id="product-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full text-sm text-white/80 file:mr-4 file:rounded-full file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-xs file:font-semibold file:text-white/80 hover:file:bg-white/20"
+                />
+                <div className="flex h-36 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-xs text-white/50">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt="Vista previa local"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : formState.imageUrl ? (
+                    <img
+                      src={formState.imageUrl}
+                      alt="Imagen del producto"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>Vista previa de imagen</span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleUpload}
+                    disabled={!selectedFile || uploadStatus === 'uploading' || !isCloudinaryConfigured}
+                  >
+                    {uploadStatus === 'uploading' ? 'Subiendo...' : 'Subir imagen'}
+                  </Button>
+                  {formState.imageUrl ? (
+                    <span className="text-xs text-emerald-200/80">URL lista para guardar.</span>
+                  ) : null}
+                </div>
+                {uploadMessage ? <p className={`text-xs ${uploadMessageClass}`}>{uploadMessage}</p> : null}
+                {!isCloudinaryConfigured ? (
+                  <p className="text-xs text-amber-200/80">
+                    Configura VITE_CLOUDINARY_CLOUD_NAME y VITE_CLOUDINARY_UPLOAD_PRESET para subir
+                    imágenes.
+                  </p>
+                ) : null}
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm text-white/70" htmlFor="product-stock">
