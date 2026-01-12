@@ -4,9 +4,10 @@ export interface ProductSpec {
 }
 
 export interface Product {
-  id: number
+  id: string
   slug: string
   name: string
+  category: string
   price: number
   type: 'ABC' | 'CO2'
   capacity: string
@@ -18,9 +19,10 @@ export interface Product {
 
 export const products: Product[] = [
   {
-    id: 1,
+    id: '1',
     slug: 'extintor-abc-1kg-premium',
     name: 'Extintor ABC 1kg Premium',
+    category: 'Extintores',
     price: 34990,
     type: 'ABC',
     capacity: '1kg',
@@ -34,9 +36,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 2,
+    id: '2',
     slug: 'extintor-abc-2kg-pro',
     name: 'Extintor ABC 2kg Pro',
+    category: 'Extintores',
     price: 45990,
     type: 'ABC',
     capacity: '2kg',
@@ -50,9 +53,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 3,
+    id: '3',
     slug: 'extintor-abc-6kg-industrial',
     name: 'Extintor ABC 6kg Industrial',
+    category: 'Extintores',
     price: 78990,
     type: 'ABC',
     capacity: '6kg',
@@ -66,9 +70,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 4,
+    id: '4',
     slug: 'extintor-co2-2kg-elite',
     name: 'Extintor CO2 2kg Elite',
+    category: 'Extintores',
     price: 99990,
     type: 'CO2',
     capacity: '2kg',
@@ -82,9 +87,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 5,
+    id: '5',
     slug: 'extintor-co2-5kg-corporativo',
     name: 'Extintor CO2 5kg Corporativo',
+    category: 'Extintores',
     price: 159990,
     type: 'CO2',
     capacity: '5kg',
@@ -98,9 +104,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 6,
+    id: '6',
     slug: 'kit-accesorios-premium',
     name: 'Kit Accesorios Premium',
+    category: 'Accesorios',
     price: 24990,
     type: 'ABC',
     capacity: 'Accesorios',
@@ -114,9 +121,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 7,
+    id: '7',
     slug: 'extintor-abc-4kg-residencial',
     name: 'Extintor ABC 4kg Residencial',
+    category: 'Extintores',
     price: 62990,
     type: 'ABC',
     capacity: '4kg',
@@ -130,9 +138,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 8,
+    id: '8',
     slug: 'extintor-co2-10kg-industrial',
     name: 'Extintor CO2 10kg Industrial',
+    category: 'Extintores',
     price: 249990,
     type: 'CO2',
     capacity: '10kg',
@@ -146,9 +155,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 9,
+    id: '9',
     slug: 'senaletica-premium-pack',
     name: 'Pack Señalética Premium',
+    category: 'Accesorios',
     price: 18990,
     type: 'ABC',
     capacity: 'Señalética',
@@ -162,9 +172,10 @@ export const products: Product[] = [
     ],
   },
   {
-    id: 10,
+    id: '10',
     slug: 'extintor-abc-9kg-comercial',
     name: 'Extintor ABC 9kg Comercial',
+    category: 'Extintores',
     price: 109990,
     type: 'ABC',
     capacity: '9kg',

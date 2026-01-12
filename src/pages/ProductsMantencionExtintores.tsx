@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard'
 import ProductCategoryTabs from '../components/ProductCategoryTabs'
 import { getProducts, normalizeCategory, PRODUCTS_EVENT, STORAGE_KEY, Product } from '../lib/productsStore'
 
-const ProductsExtintores = () => {
+const ProductsMantencionExtintores = () => {
   const [products, setProducts] = useState<Product[]>(() => getProducts())
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const ProductsExtintores = () => {
   }, [])
 
   const filteredProducts = useMemo(
-    () => products.filter((product) => normalizeCategory(product.category) === 'Extintores'),
+    () => products.filter((product) => normalizeCategory(product.category) === 'Mantención de Extintores'),
     [products],
   )
 
@@ -34,9 +34,9 @@ const ProductsExtintores = () => {
       <div className="space-y-8 pb-20">
         <header className="space-y-3">
           <p className="text-sm uppercase tracking-[0.3em] text-white/50">Catálogo</p>
-          <h1 className="text-3xl font-semibold text-white">Extintores certificados</h1>
+          <h1 className="text-3xl font-semibold text-white">Mantención de Extintores</h1>
           <p className="text-white/70">
-            Selección premium de extintores ABC y CO2 con despacho programado.
+            Programas de recarga y mantención certificados para mantener tu seguridad al día.
           </p>
         </header>
         <ProductCategoryTabs />
@@ -56,4 +56,4 @@ const ProductsExtintores = () => {
   )
 }
 
-export default ProductsExtintores
+export default ProductsMantencionExtintores

@@ -1,62 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import Container from '../components/Container'
 import Button from '../components/Button'
-import { products as catalogProducts } from '../data/products'
-
-const STORAGE_KEY = 'pyg_admin_products'
+import { deleteProduct, getProducts, Product, setProducts } from '../lib/productsStore'
 
 const categories = ['Extintores', 'Mantención de Extintores', 'Accesorios']
 
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string | undefined
 const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string | undefined
 const isCloudinaryConfigured = Boolean(cloudName && uploadPreset)
-
-type AdminProduct = {
-  id: string
-  name: string
-  category: string
-  price: number
-  description: string
-  stock?: number
-  imageUrl?: string
-}
-
-const mapDefaultProducts = (): AdminProduct[] =>
-  catalogProducts.map((product) => ({
-    id: `catalog-${product.id}`,
-    name: product.name,
-    category: product.capacity === 'Accesorios' || product.capacity === 'Señalética' ? 'Accesorios' : 'Extintores',
-    price: product.price,
-    description: product.shortDesc,
-    stock: product.stock,
-    imageUrl: product.imageUrl,
-  }))
-
-const loadProducts = (): AdminProduct[] => {
-  if (typeof window === 'undefined') {
-    return mapDefaultProducts()
-  }
-  const raw = window.localStorage.getItem(STORAGE_KEY)
-  if (!raw) {
-    return mapDefaultProducts()
-  }
-  try {
-    const parsed = JSON.parse(raw) as AdminProduct[]
-    if (!Array.isArray(parsed)) {
-      return mapDefaultProducts()
-    }
-    return parsed
-  } catch {
-    return mapDefaultProducts()
-  }
-}
-
-const persistProducts = (items: AdminProduct[]) => {
-  if (typeof window === 'undefined') {
-    return
-  }
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-}
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value)
@@ -87,7 +38,7 @@ const uploadToCloudinary = async (file: File): Promise<string> => {
 }
 
 const Admin = () => {
-  const [items, setItems] = useState<AdminProduct[]>(() => loadProducts())
+  const [items, setItems] = useState<Product[]>(() => getProducts())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formState, setFormState] = useState({
     name: '',
@@ -182,7 +133,9 @@ const Admin = () => {
 
     const stockValue = formState.stock ? Number(formState.stock) : undefined
     const imageUrlValue = formState.imageUrl.trim()
-    const nextItem: AdminProduct = {
+    const existingItem = editingId ? items.find((item) => item.id === editingId) : undefined
+    const nextItem: Product = {
+      ...existingItem,
       id: editingId ?? `custom-${Date.now()}`,
       name: formState.name,
       category: formState.category,
@@ -197,17 +150,17 @@ const Admin = () => {
       : [...items, nextItem]
 
     setItems(nextItems)
-    persistProducts(nextItems)
+    setProducts(nextItems)
     resetForm()
   }
 
-  const handleEdit = (item: AdminProduct) => {
+  const handleEdit = (item: Product) => {
     setEditingId(item.id)
     setFormState({
       name: item.name,
       category: item.category,
       price: String(item.price),
-      description: item.description,
+      description: item.description ?? item.shortDesc ?? '',
       stock: item.stock ? String(item.stock) : '',
       imageUrl: item.imageUrl ?? '',
     })
@@ -220,7 +173,7 @@ const Admin = () => {
   const handleDelete = (id: string) => {
     const nextItems = items.filter((item) => item.id !== id)
     setItems(nextItems)
-    persistProducts(nextItems)
+    deleteProduct(id)
     if (editingId === id) {
       resetForm()
     }

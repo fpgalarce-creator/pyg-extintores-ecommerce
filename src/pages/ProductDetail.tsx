@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import Container from '../components/Container'
 import Button from '../components/Button'
 import Badge from '../components/Badge'
-import { products } from '../data/products'
+import { getProducts } from '../lib/productsStore'
 import { useCart } from '../context/CartContext'
 
 const formatPrice = (price: number) =>
@@ -10,6 +10,7 @@ const formatPrice = (price: number) =>
 
 const ProductDetail = () => {
   const { slug } = useParams()
+  const products = getProducts()
   const product = products.find((item) => item.slug === slug)
   const { addItem } = useCart()
 
@@ -54,7 +55,7 @@ const ProductDetail = () => {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-semibold text-white">{product.name}</h1>
-              <p className="mt-3 text-white/70">{product.shortDesc}</p>
+              <p className="mt-3 text-white/70">{product.description ?? product.shortDesc}</p>
               <div className="mt-4 text-2xl font-semibold text-white">
                 {formatPrice(product.price)}
               </div>
@@ -62,7 +63,7 @@ const ProductDetail = () => {
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
               <h2 className="text-lg font-semibold text-white">Especificaciones técnicas</h2>
               <div className="mt-4 space-y-3 text-sm text-white/70">
-                {product.specs.map((spec) => (
+                {(product.specs ?? []).map((spec) => (
                   <div key={spec.label} className="flex items-center justify-between">
                     <span>{spec.label}</span>
                     <span className="text-white">{spec.value}</span>
@@ -88,10 +89,10 @@ const ProductDetail = () => {
                 className="rounded-3xl border border-white/10 bg-white/5 p-6"
               >
                 <div className="flex h-28 items-center justify-center rounded-2xl bg-gradient-to-br from-ember/30 via-white/5 to-blaze/30 text-xs text-white/60">
-                  {item.type} · {item.capacity}
+                  {item.type && item.capacity ? `${item.type} · ${item.capacity}` : item.category}
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-white">{item.name}</h3>
-                <p className="mt-2 text-sm text-white/70">{item.shortDesc}</p>
+                <p className="mt-2 text-sm text-white/70">{item.description ?? item.shortDesc}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="font-semibold text-white">{formatPrice(item.price)}</span>
                   <Button variant="secondary" onClick={() => addItem(item)}>

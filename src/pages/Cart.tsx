@@ -35,7 +35,9 @@ const Cart = () => {
                 >
                   <div>
                     <p className="text-lg font-semibold text-white">{item.product.name}</p>
-                    <p className="text-sm text-white/60">{item.product.shortDesc}</p>
+                    <p className="text-sm text-white/60">
+                      {item.product.description ?? item.product.shortDesc}
+                    </p>
                     <p className="mt-2 font-semibold text-white">
                       {formatPrice(item.product.price)}
                     </p>
