@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Navigate, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -7,6 +7,20 @@ import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Placeholder from './pages/Placeholder'
+import Login from './pages/Login'
+import Admin from './pages/Admin'
+import Maintenance from './pages/Maintenance'
+import ProductsExtintores from './pages/ProductsExtintores'
+import ProductsAccesorios from './pages/ProductsAccesorios'
+import { getAuthSession, isAdminSession } from './utils/auth'
+
+const RequireAdmin = ({ children }: { children: JSX.Element }) => {
+  const session = getAuthSession()
+  if (!session || !isAdminSession(session)) {
+    return <Navigate to="/login" replace />
+  }
+  return children
+}
 
 const App = () => {
   return (
@@ -16,7 +30,19 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/productos" element={<Products />} />
+          <Route path="/productos/extintores" element={<ProductsExtintores />} />
+          <Route path="/productos/mantencion-extintores" element={<Maintenance />} />
+          <Route path="/productos/accesorios" element={<ProductsAccesorios />} />
           <Route path="/productos/:slug" element={<ProductDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <Admin />
+              </RequireAdmin>
+            }
+          />
           <Route path="/carrito" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route
