@@ -143,7 +143,7 @@ const Admin = () => {
     setFormState((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null
     setSelectedFile(file)
     setUploadStatus('idle')
@@ -152,13 +152,6 @@ const Admin = () => {
       setPreviewUrl(URL.createObjectURL(file))
     } else {
       setPreviewUrl(null)
-    }
-  }
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setUploadStatus('error')
-      setUploadMessage('Selecciona una imagen antes de subirla.')
       return
     }
     if (!isCloudinaryConfigured) {
@@ -169,10 +162,10 @@ const Admin = () => {
     setUploadStatus('uploading')
     setUploadMessage('Subiendo imagen...')
     try {
-      const secureUrl = await uploadToCloudinary(selectedFile)
+      const secureUrl = await uploadToCloudinary(file)
       setFormState((prev) => ({ ...prev, imageUrl: secureUrl }))
       setUploadStatus('success')
-      setUploadMessage('Imagen subida con éxito.')
+      setUploadMessage('Imagen cargada ✓')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error al subir la imagen.'
       setUploadStatus('error')
@@ -310,10 +303,24 @@ const Admin = () => {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-white/70" htmlFor="product-image">
+              <label className="text-sm text-white/70" htmlFor="product-image-url">
                 Imagen del producto
               </label>
               <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <input
+                  id="product-image-url"
+                  type="url"
+                  value={formState.imageUrl}
+                  onChange={(event) => {
+                    updateField('imageUrl', event.target.value)
+                    setUploadStatus('idle')
+                    setUploadMessage('')
+                    setPreviewUrl(null)
+                    setSelectedFile(null)
+                  }}
+                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember"
+                  placeholder="https://..."
+                />
                 <input
                   id="product-image"
                   type="file"
@@ -321,37 +328,27 @@ const Admin = () => {
                   onChange={handleFileChange}
                   className="w-full text-sm text-white/80 file:mr-4 file:rounded-full file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-xs file:font-semibold file:text-white/80 hover:file:bg-white/20"
                 />
-                <div className="flex h-36 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-xs text-white/50">
-                  {previewUrl ? (
+                <div className="flex items-center gap-3">
+                  {previewUrl || formState.imageUrl ? (
                     <img
-                      src={previewUrl}
-                      alt="Vista previa local"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : formState.imageUrl ? (
-                    <img
-                      src={formState.imageUrl}
-                      alt="Imagen del producto"
-                      className="h-full w-full object-cover"
+                      src={previewUrl ?? formState.imageUrl}
+                      alt="Vista previa de imagen"
+                      className="h-16 w-16 rounded-lg object-cover"
                     />
                   ) : (
-                    <span>Vista previa de imagen</span>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[10px] text-white/50">
+                      Sin imagen
+                    </div>
                   )}
+                  <div className="space-y-1">
+                    <p className="text-xs text-white/60">
+                      {uploadStatus === 'uploading' ? 'Subiendo imagen...' : 'Selecciona o pega una URL.'}
+                    </p>
+                    {uploadMessage ? (
+                      <p className={`text-xs ${uploadMessageClass}`}>{uploadMessage}</p>
+                    ) : null}
+                  </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={handleUpload}
-                    disabled={!selectedFile || uploadStatus === 'uploading' || !isCloudinaryConfigured}
-                  >
-                    {uploadStatus === 'uploading' ? 'Subiendo...' : 'Subir imagen'}
-                  </Button>
-                  {formState.imageUrl ? (
-                    <span className="text-xs text-emerald-200/80">URL lista para guardar.</span>
-                  ) : null}
-                </div>
-                {uploadMessage ? <p className={`text-xs ${uploadMessageClass}`}>{uploadMessage}</p> : null}
                 {!isCloudinaryConfigured ? (
                   <p className="text-xs text-amber-200/80">
                     Configura VITE_CLOUDINARY_CLOUD_NAME y VITE_CLOUDINARY_UPLOAD_PRESET para subir
@@ -375,7 +372,7 @@ const Admin = () => {
               />
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" disabled={uploadStatus === 'uploading'}>
                 {isEditing ? 'Actualizar producto' : 'Crear producto'}
               </Button>
               {isEditing ? (
