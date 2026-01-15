@@ -1,6 +1,7 @@
 import { Navigate, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import CartDrawer from './components/CartDrawer'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
@@ -26,6 +27,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-charcoal text-white">
       <Navbar />
+      <CartDrawer />
       <main className="pt-24">
         <Routes>
           <Route path="/" element={<Home />} />
