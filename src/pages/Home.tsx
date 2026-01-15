@@ -74,13 +74,13 @@ const Home = () => {
                   href="https://wa.me/56900000000"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#25D366] px-5 py-2 text-sm font-semibold text-black shadow-[0_12px_24px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5D]"
+                  className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#25D366] px-5 py-2 text-sm font-semibold text-black shadow-lg shadow-[#25D366]/20 transition hover:bg-[#1EBE5D]"
                 >
                   Cotizar por WhatsApp
                 </a>
               </div>
               <div className="mt-10 flex flex-wrap gap-3">
-                <span className="rounded-2xl border border-white/15 bg-black/70 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                <span className="rounded-2xl border border-white/15 bg-black/70 px-4 py-2 text-sm text-white/80 backdrop-blur-sm">
                   +10 años de experiencia
                 </span>
                 <span className="rounded-2xl border border-[#C9A24D]/40 bg-black/70 px-4 py-2 text-sm text-[#C9A24D] backdrop-blur-sm">
@@ -91,7 +91,7 @@ const Home = () => {
             <div className="relative">
               <div className="absolute -left-4 top-8 h-32 w-32 rounded-full bg-ember/30 blur-3xl" />
               <div className="absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-blaze/30 blur-3xl" />
-              <div className="relative rounded-[32px] border border-white/10 bg-[#0B0F14]/95 p-8 shadow-glow backdrop-blur-sm">
+              <div className="relative rounded-[32px] border border-white/10 bg-[#0B0F14]/95 p-8 shadow-2xl backdrop-blur-sm">
                 <h2 className="text-2xl font-semibold text-white">Solicita tu cotización</h2>
                 <p className="mt-2 text-sm text-white/70">
                   Completa el formulario y un asesor te contactará.
