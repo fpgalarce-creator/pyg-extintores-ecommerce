@@ -147,19 +147,15 @@ const CartDrawer = () => {
             <div className="border-t border-white/10 bg-coal/90 px-6 py-5">
               <div className="space-y-2 text-sm text-white/70">
                 <div className="flex items-center justify-between">
-                  <span>Subtotal</span>
-                  <span className="text-white">{formatCLP(subtotal)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>IVA (19%)</span>
-                  <span className="text-white">{formatCLP(tax)}</span>
+                  <span>Valor (IVA incluido)</span>
+                  <span className="text-white">{formatCLP(totalWithTax)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Despacho</span>
                   <span className="text-white/60">Se calcula al finalizar según comuna</span>
                 </div>
                 <div className="flex items-center justify-between border-t border-white/10 pt-3 text-base font-semibold text-white">
-                  <span>Total</span>
+                  <span>Total a pagar</span>
                   <span>{formatCLP(totalWithTax)}</span>
                 </div>
               </div>
