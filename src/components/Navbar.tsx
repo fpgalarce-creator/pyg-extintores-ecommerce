@@ -13,7 +13,7 @@ const navLinks = [
 ]
 
 const Navbar = () => {
-  const { count } = useCart()
+  const { count, openCart } = useCart()
   const [session, setSession] = useState(() => getAuthSession())
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isProductsOpen, setIsProductsOpen] = useState(false)
@@ -190,14 +190,14 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/carrito" className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white">
+            <button type="button" onClick={openCart} className="relative">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:border-ember/60 hover:text-white">
                 <ShoppingCart className="h-5 w-5" />
               </div>
               <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ember text-xs font-semibold">
                 {count}
               </span>
-            </Link>
+            </button>
             <div className="relative hidden lg:flex">
               {session ? (
                 <div

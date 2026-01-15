@@ -1,15 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Product } from '../lib/productsStore'
 import Badge from './Badge'
-import Button from './Button'
 import { useCart } from '../context/CartContext'
+import { formatCLP } from '../utils/format'
 
 interface ProductCardProps {
   product: Product
 }
-
-const formatPrice = (price: number) =>
-  price.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })
 
 const toCloudinaryCardUrl = (url: string) => {
   if (url.includes('/upload/')) {
@@ -20,8 +17,22 @@ const toCloudinaryCardUrl = (url: string) => {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { addItem } = useCart()
+  const { addItem, removeItem, updateQuantity, getQuantity } = useCart()
   const imageUrl = product.imageUrl || product.image
+  const quantity = getQuantity(product.id)
+
+  const handleDecrease = () => {
+    if (quantity <= 0) return
+    if (quantity === 1) {
+      removeItem(product.id)
+      return
+    }
+    updateQuantity(product.id, quantity - 1)
+  }
+
+  const handleIncrease = () => {
+    addItem(product)
+  }
 
   return (
     <div className="group flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition hover:-translate-y-1 hover:border-white/20">
@@ -55,8 +66,27 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </p>
       </div>
       <div className="mt-6 flex items-center justify-between">
-        <span className="text-lg font-semibold text-white">{formatPrice(product.price)}</span>
-        <Button onClick={() => addItem(product)}>Agregar</Button>
+        <span className="text-lg font-semibold text-white">{formatCLP(product.price)}</span>
+        <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 p-1 shadow-[0_0_18px_rgba(255,107,53,0.12)]">
+          <button
+            type="button"
+            onClick={handleDecrease}
+            disabled={quantity === 0}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-ember/60 hover:text-white disabled:cursor-not-allowed disabled:text-white/30"
+          >
+            -
+          </button>
+          <span className="min-w-[2.5rem] px-3 text-center text-sm font-semibold text-white/80">
+            {quantity}
+          </span>
+          <button
+            type="button"
+            onClick={handleIncrease}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-ember/40 bg-ember/10 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-ember hover:bg-ember/20"
+          >
+            +
+          </button>
+        </div>
       </div>
     </div>
   )

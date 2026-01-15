@@ -14,6 +14,10 @@ interface CartContextValue {
   clear: () => void
   total: number
   count: number
+  isCartOpen: boolean
+  openCart: () => void
+  closeCart: () => void
+  getQuantity: (productId: string) => number
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined)
@@ -33,6 +37,7 @@ const getStoredItems = (): CartItem[] => {
 
 export const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>(() => getStoredItems())
+  const [isCartOpen, setIsCartOpen] = useState(false)
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -61,12 +66,18 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
       prev
         .map((item) =>
           item.product.id === productId
-            ? { ...item, quantity: Math.max(1, quantity) }
+            ? { ...item, quantity: Math.max(0, quantity) }
             : item,
         )
         .filter((item) => item.quantity > 0),
     )
   }
+
+  const openCart = () => setIsCartOpen(true)
+  const closeCart = () => setIsCartOpen(false)
+
+  const getQuantity = (productId: string) =>
+    items.find((item) => item.product.id === productId)?.quantity ?? 0
 
   const clear = () => setItems([])
 
@@ -77,8 +88,20 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
   }, [items])
 
   const value = useMemo(
-    () => ({ items, addItem, removeItem, updateQuantity, clear, total, count }),
-    [items, total, count],
+    () => ({
+      items,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clear,
+      total,
+      count,
+      isCartOpen,
+      openCart,
+      closeCart,
+      getQuantity,
+    }),
+    [items, total, count, isCartOpen],
   )
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
