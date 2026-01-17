@@ -1,3 +1,4 @@
+import heroBg from "../assets/hero/hero-extintores.jpg.png";
 import { useState } from 'react'
 import { Flame, ShieldCheck, Truck, BadgeCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -53,8 +54,20 @@ const Home = () => {
 
   return (
     <div className="space-y-20 pb-20">
-      <section className="relative overflow-hidden">
+      <section
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Overlay oscuro para legibilidad */}
+        <div className="absolute inset-0 bg-black/60" />
+
+        {/* Mantengo tu “glow”/gradiente premium encima del fondo */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,138,28,0.15),transparent_55%),radial-gradient(circle_at_top_left,rgba(255,77,45,0.2),transparent_50%)]" />
+
         <Container>
           <div className="relative grid gap-12 py-20 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
@@ -71,7 +84,7 @@ const Home = () => {
                   <Button>Ver productos</Button>
                 </Link>
                 <a
-                  href="https://wa.me/56900000000"
+                  href="https://wa.me/56958086762"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#25D366] px-5 py-2 text-sm font-semibold text-black shadow-lg shadow-[#25D366]/20 transition hover:bg-[#1EBE5D]"
@@ -88,6 +101,7 @@ const Home = () => {
                 </span>
               </div>
             </div>
+
             <div className="relative">
               <div className="absolute -left-4 top-8 h-32 w-32 rounded-full bg-ember/30 blur-3xl" />
               <div className="absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-blaze/30 blur-3xl" />
@@ -96,6 +110,7 @@ const Home = () => {
                 <p className="mt-2 text-sm text-white/70">
                   Completa el formulario y un asesor te contactará.
                 </p>
+
                 <form className="mt-6 grid gap-5" onSubmit={handleSubmit}>
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
@@ -109,6 +124,7 @@ const Home = () => {
                         className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
                     </label>
+
                     <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
                       <span>CORREO ELECTRÓNICO</span>
                       <input
@@ -120,6 +136,7 @@ const Home = () => {
                         className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
                     </label>
+
                     <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
                       <span>TELÉFONO / WHATSAPP</span>
                       <input
@@ -131,6 +148,7 @@ const Home = () => {
                         className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                       />
                     </label>
+
                     <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
                       <span>TIPO DE SOLICITUD</span>
                       <select
@@ -160,6 +178,7 @@ const Home = () => {
                       </select>
                     </label>
                   </div>
+
                   <label className="space-y-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
                     <span>MENSAJE</span>
                     <textarea
@@ -171,18 +190,21 @@ const Home = () => {
                       className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white placeholder:text-white/40 focus:border-ember/60 focus:outline-none"
                     />
                   </label>
+
                   {formError && <p className="text-sm text-ember">{formError}</p>}
                   {formSuccess && (
                     <p className="text-sm text-emerald-300">
                       ¡Gracias! Recibimos tu solicitud y te contactaremos pronto.
                     </p>
                   )}
+
                   <button
                     type="submit"
                     className="mt-1 w-full rounded-full bg-ember px-5 py-3 text-sm font-semibold text-white transition hover:bg-blaze"
                   >
                     Enviar solicitud
                   </button>
+
                   <p className="text-left text-xs text-white/60">
                     Respondemos en horario laboral y confirmamos en menos de 24 horas.
                   </p>
